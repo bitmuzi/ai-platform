@@ -7,7 +7,8 @@ spring:
     url: jdbc:mysql://localhost:3306/ai_platform
     username: root
     password: 123456
-
+  profiles:
+    active: local
 server:
   port: 8123
   servlet:
@@ -23,3 +24,33 @@ knife4j:
   setting:
     language: zh_cn
 
+# AI
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: https://api.deepseek.com
+      api-key: <api-key>
+      model-name: deepseek-chat
+      # 请求及响应日志记录
+      log-requests: true
+      log-responses: true
+      # 设置输出长度
+      max-tokens: 8192
+      # 确保以json格式输出
+      strict-json-schema: true
+      response-format: json_object
+      # 出现问题时最大重试次数
+      max-retries: 3
+      # 流式模型
+      streaming-chat-model:
+        base-url: https://api.deepseek.com
+        api-key: <api-key>
+        model-name: deepseek-chat
+        # 请求及响应日志记录
+        log-requests: true
+        log-responses: true
+        # 设置输出长度
+        max-tokens: 8192
+        # 流式响应不支持结构化输出
+        # 出现问题时最大重试次数
+        max-retries: 3
