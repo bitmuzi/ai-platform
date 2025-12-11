@@ -1,4 +1,4 @@
-package org.example.ai.model.dto.user;
+package org.example.ai.model.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

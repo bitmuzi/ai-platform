@@ -8,7 +8,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.ai.exception.BusinessException;
 import org.example.ai.exception.ErrorCode;
-import org.example.ai.model.dto.user.UserQueryRequest;
+import org.example.ai.model.dto.UserQueryRequest;
 import org.example.ai.model.entity.User;
 import org.example.ai.mapper.UserMapper;
 import org.example.ai.model.enums.UserRoleEnum;

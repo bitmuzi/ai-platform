@@ -12,7 +12,7 @@ import org.example.ai.constant.UserConstant;
 import org.example.ai.exception.BusinessException;
 import org.example.ai.exception.ErrorCode;
 import org.example.ai.exception.ThrowUtils;
-import org.example.ai.model.dto.user.*;
+import org.example.ai.model.dto.*;
 import org.example.ai.model.vo.LoginUserVO;
 import org.example.ai.model.vo.UserVO;
 import org.springframework.web.bind.annotation.GetMapping;
