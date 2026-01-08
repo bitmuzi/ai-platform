@@ -4,12 +4,15 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.example.ai.ai.model.StreamMessageTypeEnum;
 import org.example.ai.ai.model.message.AiResponseMessage;
 import org.example.ai.ai.model.message.StreamMessage;
 import org.example.ai.ai.model.message.ToolExecutedMessage;
 import org.example.ai.ai.model.message.ToolRequestMessage;
+import org.example.ai.constant.AppConstant;
+import org.example.ai.core.builder.VueProjectBuilder;
 import org.example.ai.model.entity.User;
 import org.example.ai.model.enums.ChatHistoryMessageTypeEnum;
 import org.example.ai.service.ChatHistoryService;
@@ -26,6 +29,9 @@ import java.util.Set;
 @Slf4j
 @Component
 public class JsonMessageStreamHandler {
+
+    @Resource
+    private VueProjectBuilder vueProjectBuilder;
 
     /**
      * 处理 TokenStream（VUE_PROJECT）
@@ -54,6 +60,9 @@ public class JsonMessageStreamHandler {
                     // 流式响应完成后，添加 AI 消息到对话历史
                     String aiResponse = chatHistoryStringBuilder.toString();
                     chatHistoryService.addChatMessage(appId, aiResponse, ChatHistoryMessageTypeEnum.AI.getValue(), loginUser.getId());
+                    //异步构造Vue项目
+                    String projectPath = AppConstant.CODE_OUTPUT_ROOT_DIR + "/vue_project_" + appId;
+                    vueProjectBuilder.buildProjectAsync(projectPath);
                 })
                 .doOnError(error -> {
                     // 如果AI回复失败，也要记录错误消息
