@@ -71,3 +71,11 @@ langchain4j:
         # 流式响应不支持结构化输出
         # 出现问题时最大重试次数
         max-retries: 3
+# 添加 COS 对象存储配置（需要从腾讯云获取）
+cos:
+  client:
+    host: your-custom-domain.com
+    secretId: your-secret-id
+    secretKey: your-secret-key
+    region: ap-shanghai
+    bucket: your-bucket-name

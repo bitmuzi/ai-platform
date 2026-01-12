@@ -16,6 +16,8 @@ import java.util.List;
  * @author <a href="https://github.com/bitmuzi">bitmuzi</a>
  */
 public interface AppService extends IService<App> {
+    void generateAppScreenshotAsync(Long appId, String appUrl);
+
     /**
      * 获取应用封装类
      * @param app
