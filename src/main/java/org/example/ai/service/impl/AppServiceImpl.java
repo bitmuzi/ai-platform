@@ -8,6 +8,8 @@ import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.example.ai.ai.AiCodeGenTypeRoutingService;
+import org.example.ai.ai.AiContentRestrictService;
 import org.example.ai.constant.AppConstant;
 import org.example.ai.core.AiCodeGeneratorFacade;
 import org.example.ai.core.builder.VueProjectBuilder;
@@ -15,6 +17,7 @@ import org.example.ai.core.handler.StreamHandlerExecutor;
 import org.example.ai.exception.BusinessException;
 import org.example.ai.exception.ErrorCode;
 import org.example.ai.exception.ThrowUtils;
+import org.example.ai.model.dto.app.AppAddRequest;
 import org.example.ai.model.dto.app.AppQueryRequest;
 import org.example.ai.model.entity.App;
 import org.example.ai.model.entity.User;
@@ -62,6 +65,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     private VueProjectBuilder vueProjectBuilder;
     @Resource
     private ScreenshotService screenshotService;
+    @Resource
+    private AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService;
+    @Resource
+    private AiContentRestrictService aiContentRestrictService;
 
     @Override
     public AppVO getAppVO(App app) {
@@ -152,6 +159,31 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         // 7. 收集AI响应内容并在完成后记录到对话历史
         return streamHandlerExecutor.doExecute(codeStream, chatHistoryService, appId, loginUser, codeGenTypeEnum);
     }
+
+
+
+    @Override
+    public Long createApp(AppAddRequest appAddRequest, User loginUser) {
+        // 参数校验
+        String initPrompt = appAddRequest.getInitPrompt();
+        ThrowUtils.throwIf(StrUtil.isBlank(initPrompt), ErrorCode.PARAMS_ERROR, "初始化 prompt 不能为空");
+        // 构造入库对象
+        App app = new App();
+        BeanUtil.copyProperties(appAddRequest, app);
+        app.setUserId(loginUser.getId());
+        // 使用 AI 生成应用名称（12字以内）
+        String appName = aiContentRestrictService.generateAppName(initPrompt);
+        app.setAppName(appName);
+        // 使用 AI 智能选择代码生成类型
+        CodeGenTypeEnum selectedCodeGenType = aiCodeGenTypeRoutingService.routeCodeGenType(initPrompt);
+        app.setCodeGenType(selectedCodeGenType.getValue());
+        // 插入数据库
+        boolean result = this.save(app);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        log.info("应用创建成功，ID: {}, 类型: {}", app.getId(), selectedCodeGenType.getValue());
+        return app.getId();
+    }
+
 
     @Override
     public String deployApp(Long appId, User loginUser) {

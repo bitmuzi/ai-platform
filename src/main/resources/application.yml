@@ -54,8 +54,8 @@ langchain4j:
       # 设置输出长度
       max-tokens: 8192
       # 确保以json格式输出
-      strict-json-schema: true
-      response-format: json_object
+#      strict-json-schema: true
+#      response-format: json_object
       # 出现问题时最大重试次数
       max-retries: 3
       # 流式模型
