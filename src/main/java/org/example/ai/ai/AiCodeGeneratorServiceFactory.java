@@ -10,7 +10,7 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.example.ai.ai.tools.FileWriteTool;
+import org.example.ai.ai.tools.*;
 import org.example.ai.exception.BusinessException;
 import org.example.ai.exception.ErrorCode;
 import org.example.ai.model.enums.CodeGenTypeEnum;
@@ -41,6 +41,10 @@ public class AiCodeGeneratorServiceFactory {
 
     @Resource
     private ChatHistoryService chatHistoryService;
+
+    @Resource
+    private ToolManager toolManager;
+
     /**
      * 创建AI代码生成器服务
      * 默认提供一个Bean
@@ -112,9 +116,10 @@ public class AiCodeGeneratorServiceFactory {
         return switch (codeGenType) {
             // Vue 项目生成使用推理模型
             case VUE_PROJECT -> AiServices.builder(AiCodeGeneratorService.class)
+                    .chatModel(chatModel)
                     .streamingChatModel(reasoningStreamingChatModel)
                     .chatMemoryProvider(memoryId -> chatMemory)
-                    .tools(new FileWriteTool())
+                    .tools(toolManager.getAllTools())
                     // 处理工具调用幻觉问题, 如果遇到调用不存在的工具会返回相关错误信息
                     .hallucinatedToolNameStrategy(
                             toolExecutionRequest -> ToolExecutionResultMessage.from(
