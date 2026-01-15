@@ -9,7 +9,9 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.example.ai.ai.AiCodeGenTypeRoutingService;
+import org.example.ai.ai.AiCodeGenTypeRoutingServiceFactory;
 import org.example.ai.ai.AiContentRestrictService;
+import org.example.ai.ai.AiContentRestrictServiceFactory;
 import org.example.ai.constant.AppConstant;
 import org.example.ai.core.AiCodeGeneratorFacade;
 import org.example.ai.core.builder.VueProjectBuilder;
@@ -66,9 +68,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     @Resource
     private ScreenshotService screenshotService;
     @Resource
-    private AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService;
+    private AiCodeGenTypeRoutingServiceFactory aiCodeGenTypeRoutingServiceFactory;
     @Resource
-    private AiContentRestrictService aiContentRestrictService;
+    private AiContentRestrictServiceFactory aiContentRestrictServiceFactory;
 
     @Override
     public AppVO getAppVO(App app) {
@@ -171,10 +173,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         App app = new App();
         BeanUtil.copyProperties(appAddRequest, app);
         app.setUserId(loginUser.getId());
-        // 使用 AI 生成应用名称（12字以内）
+        // 使用 AI 生成应用名称（12字以内, 多例模式）
+        AiContentRestrictService aiContentRestrictService = aiContentRestrictServiceFactory.createAiContentRestrictService();
         String appName = aiContentRestrictService.generateAppName(initPrompt);
         app.setAppName(appName);
-        // 使用 AI 智能选择代码生成类型
+        // 使用 AI 智能选择代码生成类型(多例模式)
+        AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService = aiCodeGenTypeRoutingServiceFactory.createAiCodeGenTypeRoutingService();
         CodeGenTypeEnum selectedCodeGenType = aiCodeGenTypeRoutingService.routeCodeGenType(initPrompt);
         app.setCodeGenType(selectedCodeGenType.getValue());
         // 插入数据库
