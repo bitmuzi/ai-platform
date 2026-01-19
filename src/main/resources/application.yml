@@ -20,6 +20,7 @@ spring:
       password:
       # 设置写入redis的key一小时后自动过期
       ttl: 3600
+      database: 0
   profiles:
     active: local
 server:
