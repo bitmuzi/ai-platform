@@ -10,6 +10,8 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.example.ai.ai.guardrail.PromptSafetyInputGuardrail;
+import org.example.ai.ai.guardrail.RetryOutputGuardrail;
 import org.example.ai.ai.tools.*;
 import org.example.ai.exception.BusinessException;
 import org.example.ai.exception.ErrorCode;
@@ -123,6 +125,8 @@ public class AiCodeGeneratorServiceFactory {
                                 toolExecutionRequest -> ToolExecutionResultMessage.from(
                                         toolExecutionRequest, "Error: there is no tool called " + toolExecutionRequest.name()
                                 ))
+                        .inputGuardrails(new PromptSafetyInputGuardrail()) // 添加输入护轨
+//                        .outputGuardrails(new RetryOutputGuardrail()) // 添加输出护轨, 但为了保证流式响应不被中断, 暂时注释掉
                         .build();
 
             }
@@ -134,6 +138,8 @@ public class AiCodeGeneratorServiceFactory {
                         .chatModel(chatModel)
                         .streamingChatModel(openAiStreamingChatModel)
                         .chatMemory(chatMemory)
+                        .inputGuardrails(new PromptSafetyInputGuardrail()) // 添加输入护轨
+//                        .outputGuardrails(new RetryOutputGuardrail()) // 添加输出护轨, 但为了保证流式响应不被中断, 暂时注释掉
                         .build();
             }
             default -> throw new BusinessException(ErrorCode.SYSTEM_ERROR,

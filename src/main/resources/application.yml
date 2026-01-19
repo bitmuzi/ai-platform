@@ -59,19 +59,19 @@ langchain4j:
 #      response-format: json_object
       # 出现问题时最大重试次数
       max-retries: 3
-      # 流式模型
-      streaming-chat-model:
-        base-url: https://api.deepseek.com
-        api-key: <api-key>
-        model-name: deepseek-chat
-        # 请求及响应日志记录
-        log-requests: true
-        log-responses: true
-        # 设置输出长度
-        max-tokens: 8192
-        # 流式响应不支持结构化输出
-        # 出现问题时最大重试次数
-        max-retries: 3
+    # 流式模型
+    streaming-chat-model:
+      base-url: https://api.deepseek.com
+      api-key: <api-key>
+      model-name: deepseek-chat
+      # 请求及响应日志记录
+      log-requests: true
+      log-responses: true
+      # 设置输出长度
+      max-tokens: 8192
+      # 流式响应不支持结构化输出
+      # 出现问题时最大重试次数
+      max-retries: 3
     # 推理 AI 模型配置（用于复杂的推理任务）
     reasoning-streaming-chat-model:
       base-url: https://api.deepseek.com
